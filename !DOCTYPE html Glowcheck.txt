@@ -1,0 +1,988 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="theme-color" content="#0B0B0B">
+  <meta name="description" content="GlowCheck - Seu filtro anti-enganação de beleza. Economize até R$ 300/mês">
+  <title>GlowCheck - Filtro Anti-Enganação</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    :root {
+      --bg: #0B0B0B;
+      --card: #111111;
+      --neon: #FFE922;
+      --red: #FF1744;
+      --white: #FFFFFF;
+      --muted: #9E9E9E;
+      --border: rgba(255, 255, 255, 0.08);
+    }
+
+    body {
+      font-family: 'Poppins', -apple-system, sans-serif;
+      background: var(--bg);
+      color: var(--white);
+      overflow-x: hidden;
+      line-height: 1.5;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* Header fixo */
+    .header {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      background: rgba(11, 11, 11, 0.95);
+      backdrop-filter: blur(10px);
+      padding: 12px 20px;
+      z-index: 1000;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .logo {
+      font-size: 20px;
+      font-weight: 900;
+      color: var(--neon);
+      text-shadow: 0 0 15px rgba(255, 233, 34, 0.6);
+      letter-spacing: -0.5px;
+    }
+
+    .menu-btn {
+      width: 40px;
+      height: 40px;
+      background: transparent;
+      border: 2px solid var(--neon);
+      border-radius: 8px;
+      color: var(--neon);
+      font-size: 20px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.3s ease;
+    }
+
+    .menu-btn:active {
+      transform: scale(0.95);
+      box-shadow: 0 0 20px rgba(255, 233, 34, 0.4);
+    }
+
+    /* Menu lateral */
+    .side-menu {
+      position: fixed;
+      top: 0;
+      right: -100%;
+      width: 80%;
+      max-width: 300px;
+      height: 100vh;
+      background: var(--card);
+      z-index: 2000;
+      transition: right 0.3s ease;
+      padding: 80px 24px 24px;
+      border-left: 2px solid var(--neon);
+      box-shadow: -5px 0 30px rgba(0, 0, 0, 0.5);
+    }
+
+    .side-menu.active {
+      right: 0;
+    }
+
+    .overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0, 0, 0, 0.8);
+      z-index: 1500;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s ease;
+    }
+
+    .overlay.active {
+      opacity: 1;
+      pointer-events: all;
+    }
+
+    .menu-close {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      width: 36px;
+      height: 36px;
+      background: transparent;
+      border: none;
+      color: var(--neon);
+      font-size: 28px;
+      cursor: pointer;
+      line-height: 1;
+    }
+
+    .menu-link {
+      display: block;
+      padding: 16px 0;
+      color: var(--white);
+      text-decoration: none;
+      font-weight: 600;
+      font-size: 16px;
+      border-bottom: 1px solid var(--border);
+      transition: color 0.3s ease;
+    }
+
+    .menu-link:active {
+      color: var(--neon);
+    }
+
+    /* Container */
+    .container {
+      padding: 0 20px;
+      max-width: 600px;
+      margin: 0 auto;
+    }
+
+    /* Hero */
+    .hero {
+      padding: 100px 0 60px;
+      text-align: center;
+      position: relative;
+    }
+
+    .hero::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 300px;
+      height: 300px;
+      background: radial-gradient(circle, rgba(255, 233, 34, 0.15) 0%, transparent 70%);
+      animation: pulse 4s ease-in-out infinite;
+      pointer-events: none;
+    }
+
+    @keyframes pulse {
+      0%, 100% { transform: translateX(-50%) scale(1); opacity: 0.5; }
+      50% { transform: translateX(-50%) scale(1.2); opacity: 0.8; }
+    }
+
+    .badge {
+      display: inline-block;
+      background: var(--card);
+      border: 1px solid var(--neon);
+      color: var(--neon);
+      padding: 6px 16px;
+      border-radius: 20px;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 1.5px;
+      margin-bottom: 20px;
+      box-shadow: 0 0 15px rgba(255, 233, 34, 0.3);
+      animation: float 3s ease-in-out infinite;
+    }
+
+    @keyframes float {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-8px); }
+    }
+
+    .hero h1 {
+      font-size: 32px;
+      font-weight: 900;
+      color: var(--neon);
+      margin-bottom: 16px;
+      line-height: 1.2;
+      text-shadow: 0 0 25px rgba(255, 233, 34, 0.4);
+      letter-spacing: -1px;
+    }
+
+    .hero-subtitle {
+      font-size: 16px;
+      color: var(--white);
+      margin-bottom: 12px;
+      font-weight: 400;
+      line-height: 1.5;
+    }
+
+    .hero-text {
+      font-size: 14px;
+      color: var(--muted);
+      margin-bottom: 32px;
+    }
+
+    /* Botões */
+    .btn {
+      display: block;
+      width: 100%;
+      padding: 16px;
+      border-radius: 12px;
+      font-weight: 800;
+      font-size: 15px;
+      text-decoration: none;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      border: none;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .btn-primary {
+      background: transparent;
+      border: 3px solid var(--neon);
+      color: var(--neon);
+      box-shadow: 0 0 20px rgba(255, 233, 34, 0.3);
+      margin-bottom: 12px;
+    }
+
+    .btn-primary:active {
+      transform: scale(0.98);
+      box-shadow: 0 0 30px rgba(255, 233, 34, 0.6);
+    }
+
+    .btn-secondary {
+      background: var(--card);
+      color: var(--white);
+      border: 2px solid var(--border);
+    }
+
+    .btn-secondary:active {
+      transform: scale(0.98);
+      border-color: var(--neon);
+    }
+
+    /* Seções */
+    section {
+      padding: 50px 0;
+      border-top: 1px solid var(--border);
+    }
+
+    .section-header {
+      text-align: center;
+      margin-bottom: 32px;
+    }
+
+    .section-title {
+      font-size: 28px;
+      font-weight: 900;
+      color: var(--neon);
+      margin-bottom: 8px;
+      text-shadow: 0 0 15px rgba(255, 233, 34, 0.3);
+      letter-spacing: -0.5px;
+    }
+
+    .section-subtitle {
+      font-size: 14px;
+      color: var(--muted);
+      line-height: 1.6;
+    }
+
+    /* Cards */
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 24px;
+      margin-bottom: 16px;
+      position: relative;
+      overflow: hidden;
+      transition: all 0.3s ease;
+    }
+
+    .card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 3px;
+      background: linear-gradient(90deg, var(--neon), transparent);
+      transform: scaleX(0);
+      transition: transform 0.3s ease;
+    }
+
+    .card:active::before {
+      transform: scaleX(1);
+    }
+
+    .card:active {
+      border-color: var(--neon);
+      box-shadow: 0 8px 25px rgba(255, 233, 34, 0.15);
+    }
+
+    .card-number {
+      display: inline-flex;
+      width: 40px;
+      height: 40px;
+      background: var(--neon);
+      color: var(--bg);
+      border-radius: 50%;
+      align-items: center;
+      justify-content: center;
+      font-weight: 900;
+      font-size: 18px;
+      margin-bottom: 16px;
+      box-shadow: 0 0 15px rgba(255, 233, 34, 0.5);
+    }
+
+    .card h3 {
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--white);
+      margin-bottom: 8px;
+    }
+
+    .card p {
+      color: var(--muted);
+      font-size: 14px;
+      line-height: 1.6;
+    }
+
+    .card ul {
+      list-style: none;
+      padding: 0;
+    }
+
+    .card ul li {
+      padding: 10px 0;
+      color: var(--muted);
+      font-size: 14px;
+      position: relative;
+      padding-left: 24px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .card ul li:last-child {
+      border-bottom: none;
+    }
+
+    .card ul li::before {
+      content: '✓';
+      position: absolute;
+      left: 0;
+      color: var(--neon);
+      font-weight: 900;
+      font-size: 16px;
+    }
+
+    /* Premium Card */
+    .premium-card {
+      background: linear-gradient(135deg, var(--card) 0%, rgba(255, 233, 34, 0.05) 100%);
+      border: 2px solid var(--neon);
+      box-shadow: 0 0 30px rgba(255, 233, 34, 0.2);
+    }
+
+    .price {
+      font-size: 48px;
+      font-weight: 900;
+      color: var(--neon);
+      margin: 16px 0;
+      text-shadow: 0 0 20px rgba(255, 233, 34, 0.5);
+      line-height: 1;
+    }
+
+    .price-period {
+      font-size: 16px;
+      color: var(--muted);
+      font-weight: 400;
+    }
+
+    /* Depoimentos */
+    .testimonial {
+      background: var(--card);
+      border-left: 4px solid var(--neon);
+      padding: 20px;
+      border-radius: 8px;
+      margin-bottom: 16px;
+      position: relative;
+    }
+
+    .testimonial::before {
+      content: '"';
+      position: absolute;
+      top: 10px;
+      left: 10px;
+      font-size: 50px;
+      color: var(--neon);
+      opacity: 0.2;
+      font-family: Georgia, serif;
+      line-height: 1;
+    }
+
+    .testimonial p {
+      font-style: italic;
+      color: var(--muted);
+      font-size: 14px;
+      padding-left: 20px;
+    }
+
+    /* FAQ */
+    .faq {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      margin-bottom: 12px;
+      overflow: hidden;
+      transition: all 0.3s ease;
+    }
+
+    .faq-question {
+      padding: 18px;
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--white);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      cursor: pointer;
+      user-select: none;
+    }
+
+    .faq-icon {
+      color: var(--neon);
+      font-size: 24px;
+      font-weight: 400;
+      transition: transform 0.3s ease;
+      line-height: 1;
+    }
+
+    .faq.active .faq-icon {
+      transform: rotate(45deg);
+    }
+
+    .faq.active {
+      border-color: var(--neon);
+    }
+
+    .faq-answer {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.3s ease, padding 0.3s ease;
+      color: var(--muted);
+      font-size: 14px;
+      line-height: 1.6;
+    }
+
+    .faq.active .faq-answer {
+      max-height: 200px;
+      padding: 0 18px 18px;
+      border-top: 1px solid var(--border);
+    }
+
+    /* CTA Section */
+    .cta-section {
+      background: linear-gradient(135deg, rgba(255, 233, 34, 0.08) 0%, transparent 100%);
+      text-align: center;
+      padding: 60px 0;
+    }
+
+    .app-icons {
+      display: flex;
+      gap: 12px;
+      margin-top: 24px;
+    }
+
+    .app-icon {
+      flex: 1;
+      padding: 14px;
+      background: var(--card);
+      border: 2px solid var(--border);
+      border-radius: 12px;
+      color: var(--white);
+      text-decoration: none;
+      font-weight: 700;
+      font-size: 13px;
+      transition: all 0.3s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+
+    .app-icon:active {
+      border-color: var(--neon);
+      transform: scale(0.98);
+    }
+
+    /* Footer */
+    footer {
+      border-top: 1px solid var(--border);
+      padding: 40px 0 80px;
+      text-align: center;
+    }
+
+    .footer-links {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 16px;
+      margin-bottom: 20px;
+    }
+
+    .footer-links a {
+      color: var(--muted);
+      text-decoration: none;
+      font-size: 13px;
+      transition: color 0.3s ease;
+    }
+
+    .footer-links a:active {
+      color: var(--neon);
+    }
+
+    .footer-text {
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    /* Animações */
+    .fade-in {
+      opacity: 0;
+      transform: translateY(20px);
+      transition: opacity 0.5s ease, transform 0.5s ease;
+    }
+
+    .fade-in.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* Scroll to top */
+    .scroll-top {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      width: 50px;
+      height: 50px;
+      background: var(--neon);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--bg);
+      font-size: 24px;
+      font-weight: 900;
+      cursor: pointer;
+      opacity: 0;
+      pointer-events: none;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 15px rgba(255, 233, 34, 0.4);
+      z-index: 999;
+    }
+
+    .scroll-top.visible {
+      opacity: 1;
+      pointer-events: all;
+    }
+
+    .scroll-top:active {
+      transform: scale(0.9);
+    }
+
+    /* Loading animation */
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    .loading {
+      display: inline-block;
+      width: 20px;
+      height: 20px;
+      border: 3px solid var(--border);
+      border-top-color: var(--neon);
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Header -->
+  <header class="header">
+    <div class="logo">GlowCheck</div>
+    <button class="menu-btn" onclick="toggleMenu()">☰</button>
+  </header>
+
+  <!-- Overlay -->
+  <div class="overlay" id="overlay" onclick="closeMenu()"></div>
+
+  <!-- Menu Lateral -->
+  <nav class="side-menu" id="sideMenu">
+    <button class="menu-close" onclick="closeMenu()">×</button>
+    <a href="#como-funciona" class="menu-link" onclick="closeMenu()">Como Funciona</a>
+    <a href="#diagnostico" class="menu-link" onclick="closeMenu()">Diagnóstico IA</a>
+    <a href="#rotina" class="menu-link" onclick="closeMenu()">Rotina Econômica</a>
+    <a href="#premium" class="menu-link" onclick="closeMenu()">Premium</a>
+    <a href="#depoimentos" class="menu-link" onclick="closeMenu()">Depoimentos</a>
+    <a href="#faq" class="menu-link" onclick="closeMenu()">FAQ</a>
+    <a href="#download" class="menu-link" onclick="closeMenu()">Baixar App</a>
+  </nav>
+
+  <!-- Hero -->
+  <section class="hero">
+    <div class="container">
+      <div class="badge">GLOWCHECK</div>
+      <h1>Seu filtro anti-enganação de beleza.</h1>
+      <p class="hero-subtitle">
+        A IA que analisa seus produtos e te mostra alternativas mais baratas que funcionam igual — ou melhor.
+      </p>
+      <p class="hero-text">
+        💰 Economize R$ 50–300 por mês evitando compras erradas.
+      </p>
+      <a href="#download" class="btn btn-primary">BAIXAR AGORA</a>
+      <a href="#como-funciona" class="btn btn-secondary">COMO FUNCIONA</a>
+    </div>
+  </section>
+
+  <!-- Como Funciona -->
+  <section id="como-funciona">
+    <div class="container">
+      <div class="section-header fade-in">
+        <h2 class="section-title">Como funciona</h2>
+        <p class="section-subtitle">
+          Quatro passos simples para você economizar sem perder o glow.
+        </p>
+      </div>
+
+      <div class="card fade-in">
+        <div class="card-number">1</div>
+        <h3>Escaneie</h3>
+        <p>Aponte a câmera para qualquer produto. O GlowCheck lê rótulo, composição e preço real de mercado.</p>
+      </div>
+
+      <div class="card fade-in">
+        <div class="card-number">2</div>
+        <h3>Descubra a verdade</h3>
+        <p>Compatibilidade, nota, composição, eficácia e se é marketing demais para função de menos.</p>
+      </div>
+
+      <div class="card fade-in">
+        <div class="card-number">3</div>
+        <h3>Economize</h3>
+        <p>Veja alternativas mais baratas, produtos aprovados e quanto você poderia estar economizando.</p>
+      </div>
+
+      <div class="card fade-in">
+        <div class="card-number">4</div>
+        <h3>Monte sua rotina econômica</h3>
+        <p>Planos de R$ 20, R$ 50 e R$ 100 por mês com produtos baratos que realmente funcionam.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Diagnóstico -->
+  <section id="diagnostico">
+    <div class="container">
+      <div class="section-header fade-in">
+        <h2 class="section-title">Diagnóstico por IA</h2>
+        <p class="section-subtitle">
+          A IA analisa sua pele e cabelo e te diz onde você está gastando dinheiro à toa. Uma foto = diagnóstico completo + economia imediata.
+        </p>
+      </div>
+
+      <div class="card fade-in">
+        <h3>🔍 Tipo de pele e cabelo</h3>
+        <p>Análise precisa do seu tipo de pele (oleosa, seca, mista, sensível) e cabelo (liso, ondulado, cacheado, crespo).</p>
+      </div>
+
+      <div class="card fade-in">
+        <h3>⚠️ Problemas identificados</h3>
+        <p>Principais e secundários: oleosidade, sensibilidade, falta de hidratação, frizz e muito mais.</p>
+      </div>
+
+      <div class="card fade-in">
+        <h3>✅ Produtos compatíveis</h3>
+        <p>O que funciona e o que NÃO funciona para o seu perfil específico.</p>
+      </div>
+
+      <div class="card fade-in">
+        <h3>💸 Estimativa de desperdício</h3>
+        <p>Descubra quanto você joga fora por mês com produtos desnecessários ou errados.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Rotina Econômica -->
+  <section id="rotina">
+    <div class="container">
+      <div class="section-header fade-in">
+        <h2 class="section-title">Rotina econômica</h2>
+        <p class="section-subtitle">
+          Rotinas reais para quem não quer gastar à toa. Criadas pela IA, simples, acessíveis e eficientes.
+        </p>
+      </div>
+
+      <div class="card fade-in">
+        <h3>💚 R$ 20/mês</h3>
+        <p>O mínimo para cuidar sem jogar dinheiro fora. Produtos essenciais com ótimo custo-benefício.</p>
+      </div>
+
+      <div class="card fade-in">
+        <h3>💙 R$ 50/mês</h3>
+        <p>Custo-benefício forte, foco em resultado. Rotina completa sem extravagância.</p>
+      </div>
+
+      <div class="card fade-in">
+        <h3>💛 R$ 100/mês</h3>
+        <p>Cuidados completos, ainda sem extravagância. Máximo resultado com investimento inteligente.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Premium -->
+  <section id="premium">
+    <div class="container">
+      <div class="section-header fade-in">
+        <h2 class="section-title">GlowCheck Premium</h2>
+        <p class="section-subtitle">A assinatura que se paga sozinha.</p>
+      </div>
+
+      <div class="card fade-in">
+        <h3>✨ O que inclui</h3>
+        <ul>
+          <li>Scans ilimitados</li>
+          <li>Alternativas ilimitadas</li>
+          <li>Diagnóstico avançado</li>
+          <li>Relatório mensal</li>
+          <li>Rotina personalizada</li>
+          <li>Feed exclusivo</li>
+          <li>Prioridade no app</li>
+        </ul>
+      </div>
+
+      <div class="card premium-card fade-in">
+        <h3>💎 Invista no seu glow</h3>
+        <div class="price">R$ 14,90<span class="price-period">/mês</span></div>
+        <p style="margin-bottom: 20px; color: var(--muted); font-size: 14px;">
+          Economize muito mais do que isso evitando compras erradas. A assinatura se paga sozinha.
+        </p>
+        <a href="#download" class="btn btn-primary">ASSINAR AGORA</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Depoimentos -->
+  <section id="depoimentos">
+    <div class="container">
+      <div class="section-header fade-in">
+        <h2 class="section-title">Quem já usou diz</h2>
+      </div>
+
+      <div class="testimonial fade-in">
+        <p>Achei um creme igual ao meu de R$ 80 por R$ 16. Nunca mais volto pro caro.</p>
+      </div>
+
+      <div class="testimonial fade-in">
+        <p>Economizei R$ 192 só este mês. O app já se pagou 12 vezes!</p>
+      </div>
+
+      <div class="testimonial fade-in">
+        <p>Agora eu sei o que presta e o que engana. Melhor decisão que tomei.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- FAQ -->
+  <section id="faq">
+    <div class="container">
+      <div class="section-header fade-in">
+        <h2 class="section-title">Perguntas Frequentes</h2>
+      </div>
+
+      <div class="faq fade-in" onclick="toggleFaq(this)">
+        <div class="faq-question">
+          <span>Ele funciona com qualquer produto?</span>
+          <span class="faq-icon">+</span>
+        </div>
+        <div class="faq-answer">
+          Sim, basta apontar a câmera. O GlowCheck reconhece produtos de pele, cabelo, maquiagem e muito mais.
+        </div>
+      </div>
+
+      <div class="faq fade-in" onclick="toggleFaq(this)">
+        <div class="faq-question">
+          <span>Posso cancelar a assinatura?</span>
+          <span class="faq-icon">+</span>
+        </div>
+        <div class="faq-answer">
+          Sim, quando quiser. Sem pegadinhas, sem letras miúdas. É só cancelar direto no app.
+        </div>
+      </div>
+
+      <div class="faq fade-in" onclick="toggleFaq(this)">
+        <div class="faq-question">
+          <span>O diagnóstico é confiável?</span>
+          <span class="faq-icon">+</span>
+        </div>
+        <div class="faq-answer">
+          Sim, análise por IA treinada com base científica e dados de milhares de produtos e ingredientes.
+        </div>
+      </div>
+
+      <div class="faq fade-in" onclick="toggleFaq(this)">
+        <div class="faq-question">
+          <span>Tem alternativas realmente baratas?</span>
+          <span class="faq-icon">+</span>
+        </div>
+        <div class="faq-answer">
+          Sim — esse é o foco do app. Encontramos produtos com os mesmos ativos por uma fração do preço.
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Download CTA -->
+  <section id="download" class="cta-section">
+    <div class="container fade-in">
+      <h2 class="section-title">Pronto para economizar?</h2>
+      <p class="section-subtitle" style="margin-bottom: 24px;">
+        Baixe o GlowCheck agora e descubra quanto você está jogando fora.
+      </p>
+
+      <div class="app-icons">
+        <a href="#" class="app-icon">
+          <span>🍎</span>
+          <span>iOS</span>
+        </a>
+        <a href="#" class="app-icon">
+          <span>🤖</span>
+          <span>Android</span>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer>
+    <div class="container">
+      <div class="footer-links">
+        <a href="#">Privacidade</a>
+        <a href="#">Termos</a>
+        <a href="#">Suporte</a>
+        <a href="#">Contato</a>
+      </div>
+      <div class="footer-text">
+        GlowCheck ©️ 2025 Todos os direitos reservados.
+      </div>
+    </div>
+  </footer>
+
+  <!-- Scroll to Top -->
+  <div class="scroll-top" id="scrollTop" onclick="scrollToTop()">↑</div>
+
+  <script>
+    // Menu lateral
+    function toggleMenu() {
+      const menu = document.getElementById('sideMenu');
+      const overlay = document.getElementById('overlay');
+      menu.classList.toggle('active');
+      overlay.classList.toggle('active');
+    }
+
+    function closeMenu() {
+      const menu = document.getElementById('sideMenu');
+      const overlay = document.getElementById('overlay');
+      menu.classList.remove('active');
+      overlay.classList.remove('active');
+    }
+
+    // Smooth scroll
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+      anchor.addEventListener('click', function (e) {
+        e.preventDefault();
+        const target = document.querySelector(this.getAttribute('href'));
+        if (target) {
+          target.scrollIntoView({
+            behavior: 'smooth',
+            block: 'start'
+          });
+        }
+      });
+    });
+
+    // FAQ toggle
+    function toggleFaq(element) {
+      const isActive = element.classList.contains('active');
+
+      // Fecha todos os FAQs
+      document.querySelectorAll('.faq').forEach(faq => {
+        faq.classList.remove('active');
+      });
+
+      // Abre o clicado se não estava ativo
+      if (!isActive) {
+        element.classList.add('active');
+      }
+    }
+
+    // Scroll animations
+    const observerOptions = {
+      threshold: 0.1,
+      rootMargin: '0px 0px -50px 0px'
+    };
+
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('visible');
+        }
+      });
+    }, observerOptions);
+
+    document.querySelectorAll('.fade-in').forEach(el => {
+      observer.observe(el);
+    });
+
+    // Scroll to top button
+    const scrollTopBtn = document.getElementById('scrollTop');
+
+    window.addEventListener('scroll', () => {
+      if (window.pageYOffset > 300) {
+        scrollTopBtn.classList.add('visible');
+      } else {
+        scrollTopBtn.classList.remove('visible');
+      }
+    });
+
+    function scrollToTop() {
+      window.scrollTo({
+        top: 0,
+        behavior: 'smooth'
+      });
+    }
+
+    // Previne zoom em inputs no iOS
+    document.addEventListener('touchstart', function(e) {
+      if (e.touches.length > 1) {
+        e.preventDefault();
+      }
+    }, { passive: false });
+
+    // Fecha menu ao clicar fora
+    document.addEventListener('click', (e) => {
+      const menu = document.getElementById('sideMenu');
+      const menuBtn = document.querySelector('.menu-btn');
+
+      if (!menu.contains(e.target) && !menuBtn.contains(e.target)) {
+        closeMenu();
+      }
+    });
+  </script>
+
+</body>
+</html>
